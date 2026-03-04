@@ -150,21 +150,76 @@ export default function DashboardReports({ patients, visits }: DashboardReportsP
             <CardDescription>Shortcut laporan cepat</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Button variant="outline" className="w-full justify-start gap-3 h-12">
+            <Button
+              variant="outline"
+              className="w-full justify-start gap-3 h-12"
+              onClick={() => {
+                const diagnosaCount: Record<string, number> = {};
+                visits.forEach(v => {
+                  diagnosaCount[v.diagnosa] = (diagnosaCount[v.diagnosa] || 0) + 1;
+                });
+                const topDiagnosa = Object.entries(diagnosaCount)
+                  .sort((a, b) => b[1] - a[1])
+                  .slice(0, 10);
+
+                exportToPDF(
+                  ['Penyakit / Diagnosa', 'Jumlah Kasus'],
+                  topDiagnosa.map(([name, count]) => [name, count]),
+                  'Laporan_Penyakit_Terbanyak',
+                  'LAPORAN 10 BESAR PENYAKIT PUSKESMAS SAMATA'
+                );
+              }}
+            >
               <FileText className="w-5 h-5 text-emerald-600" />
               <div className="text-left">
                 <div className="text-sm font-semibold">Laporan Penyakit Terbanyak</div>
                 <div className="text-xs text-slate-400">Top 10 Diagnosa</div>
               </div>
             </Button>
-            <Button variant="outline" className="w-full justify-start gap-3 h-12">
+            <Button
+              variant="outline"
+              className="w-full justify-start gap-3 h-12"
+              onClick={() => {
+                const bpjsVisits = visitPatients.filter(v => v.patient?.asuransi === 'BPJS');
+                const data = bpjsVisits.map(v => [
+                  v.tanggalKunjungan,
+                  v.patient?.nomorRM || '',
+                  v.patient?.nama || '',
+                  v.diagnosa,
+                  v.tindakan
+                ]);
+                exportToPDF(
+                  ['Tanggal', 'No RM', 'Nama Pasien', 'Diagnosa', 'Tindakan'],
+                  data,
+                  'Laporan_Klaim_BPJS',
+                  'LAPORAN KUNJUNGAN PASIEN BPJS'
+                );
+              }}
+            >
               <FileText className="w-5 h-5 text-blue-600" />
               <div className="text-left">
                 <div className="text-sm font-semibold">Laporan Klaim BPJS</div>
                 <div className="text-xs text-slate-400">Summary bulanan BPJS</div>
               </div>
             </Button>
-            <Button variant="outline" className="w-full justify-start gap-3 h-12">
+            <Button
+              variant="outline"
+              className="w-full justify-start gap-3 h-12"
+              onClick={() => {
+                const luarWilayah = visitPatients.filter(v => v.patient?.wilayahKerja === 'Luar Wilayah');
+                const data = luarWilayah.map(v => [
+                  v.patient?.nama || '',
+                  v.patient?.alamatDomisili || '',
+                  v.diagnosa
+                ]);
+                exportToPDF(
+                  ['Nama Pasien', 'Alamat', 'Diagnosa'],
+                  data,
+                  'Laporan_Luar_Wilayah',
+                  'LAPORAN KUNJUNGAN PASIEN LUAR WILAYAH'
+                );
+              }}
+            >
               <FileText className="w-5 h-5 text-orange-600" />
               <div className="text-left">
                 <div className="text-sm font-semibold">Laporan Luar Wilayah</div>

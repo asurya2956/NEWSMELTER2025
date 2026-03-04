@@ -4,6 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Patient } from '@/lib/data'
 import VisitorAnalytics from './VisitorAnalytics'
 import { Users, UserCheck, ShieldCheck, MapPin } from 'lucide-react'
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts'
+import { differenceInYears, parseISO } from 'date-fns'
 
 interface DashboardOverviewProps {
   patients: Patient[]
@@ -17,10 +19,31 @@ export default function DashboardOverview({ patients }: DashboardOverviewProps) 
 
   const stats = [
     { title: 'Total Pasien', value: totalPatients, icon: <Users className="w-4 h-4 text-emerald-600" />, sub: 'Semua Kunjungan' },
-    { title: 'Pasien BPJS', value: bpjsCount, icon: <ShieldCheck className="w-4 h-4 text-blue-600" />, sub: `${Math.round((bpjsCount / totalPatients) * 100)}% dari total` },
+    { title: 'Pasien BPJS', value: bpjsCount, icon: <ShieldCheck className="w-4 h-4 text-blue-600" />, sub: totalPatients > 0 ? `${Math.round((bpjsCount / totalPatients) * 100)}% dari total` : '0%' },
     { title: 'Wilayah Samata', value: samataCount, icon: <MapPin className="w-4 h-4 text-orange-600" />, sub: 'Pasien Domisili Samata' },
-    { title: 'Pasien Perempuan', value: femaleCount, icon: <UserCheck className="w-4 h-4 text-pink-600" />, sub: `${Math.round((femaleCount / totalPatients) * 100)}% dari total` },
+    { title: 'Pasien Perempuan', value: femaleCount, icon: <UserCheck className="w-4 h-4 text-pink-600" />, sub: totalPatients > 0 ? `${Math.round((femaleCount / totalPatients) * 100)}% dari total` : '0%' },
   ]
+
+  const getAgeData = () => {
+    const ages = patients.map(p => differenceInYears(new Date(), parseISO(p.tanggalLahir)))
+    const groups = [
+      { name: '0-5', range: [0, 5], count: 0 },
+      { name: '6-12', range: [6, 12], count: 0 },
+      { name: '13-18', range: [13, 18], count: 0 },
+      { name: '19-45', range: [19, 45], count: 0 },
+      { name: '46-60', range: [46, 60], count: 0 },
+      { name: '60+', range: [61, 150], count: 0 },
+    ]
+
+    ages.forEach(age => {
+      const group = groups.find(g => age >= g.range[0] && age <= g.range[1])
+      if (group) group.count++
+    })
+
+    return groups.map(g => ({ name: g.name, value: g.count }))
+  }
+
+  const ageData = getAgeData()
 
   return (
     <div className="space-y-6">
@@ -85,10 +108,21 @@ export default function DashboardOverview({ patients }: DashboardOverviewProps) 
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base font-semibold">Distribusi Berdasarkan Usia (TBD)</CardTitle>
+            <CardTitle className="text-base font-semibold">Distribusi Berdasarkan Kelompok Usia</CardTitle>
           </CardHeader>
-          <CardContent className="h-[300px] flex items-center justify-center text-slate-400 italic">
-            Fitur analisis kelompok usia akan segera tersedia.
+          <CardContent className="h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={ageData}>
+                <XAxis dataKey="name" fontSize={12} />
+                <YAxis fontSize={12} />
+                <Tooltip />
+                <Bar dataKey="value" fill="#10b981" radius={[4, 4, 0, 0]}>
+                  {ageData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#10b981' : '#3b82f6'} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
           </CardContent>
         </Card>
       </div>
