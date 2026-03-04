@@ -20,7 +20,6 @@ export default function DashboardOverview({ patients }: DashboardOverviewProps) 
   const stats = [
     { title: 'Total Pasien', value: totalPatients, icon: <Users className="w-4 h-4 text-emerald-600" />, sub: 'Semua Kunjungan' },
     { title: 'Pasien BPJS', value: bpjsCount, icon: <ShieldCheck className="w-4 h-4 text-blue-600" />, sub: totalPatients > 0 ? `${Math.round((bpjsCount / totalPatients) * 100)}% dari total` : '0%' },
-    { title: 'Wilayah Samata', value: samataCount, icon: <MapPin className="w-4 h-4 text-orange-600" />, sub: 'Pasien Domisili Samata' },
     { title: 'Pasien Perempuan', value: femaleCount, icon: <UserCheck className="w-4 h-4 text-pink-600" />, sub: totalPatients > 0 ? `${Math.round((femaleCount / totalPatients) * 100)}% dari total` : '0%' },
   ]
 
