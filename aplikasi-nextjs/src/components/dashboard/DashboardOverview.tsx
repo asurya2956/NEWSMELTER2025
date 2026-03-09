@@ -14,14 +14,16 @@ interface DashboardOverviewProps {
 export default function DashboardOverview({ patients }: DashboardOverviewProps) {
   const totalPatients = patients.length
   const bpjsCount = patients.filter(p => p.asuransi === 'BPJS').length
+  const umumCount = patients.filter(p => p.asuransi === 'Umum').length
   const femaleCount = patients.filter(p => p.jenisKelamin === 'Perempuan').length
   const maleCount = patients.filter(p => p.jenisKelamin === 'Laki-laki').length
 
   const stats = [
     { title: 'Total Pasien', value: totalPatients, icon: <Users className="w-4 h-4 text-emerald-600" />, sub: 'Semua Kunjungan' },
-    { title: 'Pasien BPJS', value: bpjsCount, icon: <ShieldCheck className="w-4 h-4 text-blue-600" />, sub: totalPatients > 0 ? `${Math.round((bpjsCount / totalPatients) * 100)}% dari total` : '0%' },
-    { title: 'Pasien Laki-laki', value: maleCount, icon: <PersonStanding className="w-4 h-4 text-indigo-600" />, sub: totalPatients > 0 ? `${Math.round((maleCount / totalPatients) * 100)}% dari total` : '0%' },
-    { title: 'Pasien Perempuan', value: femaleCount, icon: <UserCheck className="w-4 h-4 text-pink-600" />, sub: totalPatients > 0 ? `${Math.round((femaleCount / totalPatients) * 100)}% dari total` : '0%' },
+    { title: 'Pasien BPJS', value: bpjsCount, icon: <ShieldCheck className="w-4 h-4 text-blue-600" />, sub: totalPatients > 0 ? `${Math.round((bpjsCount / totalPatients) * 100)}% BPJS` : '0%' },
+    { title: 'Pasien Umum', value: umumCount, icon: <ShieldCheck className="w-4 h-4 text-emerald-600" />, sub: totalPatients > 0 ? `${Math.round((umumCount / totalPatients) * 100)}% Umum` : '0%' },
+    { title: 'Laki-laki', value: maleCount, icon: <PersonStanding className="w-4 h-4 text-indigo-600" />, sub: totalPatients > 0 ? `${Math.round((maleCount / totalPatients) * 100)}%` : '0%' },
+    { title: 'Perempuan', value: femaleCount, icon: <UserCheck className="w-4 h-4 text-pink-600" />, sub: totalPatients > 0 ? `${Math.round((femaleCount / totalPatients) * 100)}%` : '0%' },
   ]
 
   const getAgeData = () => {
@@ -54,7 +56,7 @@ export default function DashboardOverview({ patients }: DashboardOverviewProps) 
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
         {stats.map((s, i) => (
           <Card key={i} className="border-none shadow-sm bg-white/50 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

@@ -164,32 +164,6 @@ export default function DashboardReports({ patients, visits }: DashboardReportsP
               variant="outline"
               className="w-full justify-start gap-3 h-12"
               onClick={() => {
-                const diagnosaCount: Record<string, number> = {};
-                visits.forEach(v => {
-                  diagnosaCount[v.diagnosa] = (diagnosaCount[v.diagnosa] || 0) + 1;
-                });
-                const topDiagnosa = Object.entries(diagnosaCount)
-                  .sort((a, b) => b[1] - a[1])
-                  .slice(0, 10);
-
-                exportToPDF(
-                  ['Penyakit / Diagnosa', 'Jumlah Kasus'],
-                  topDiagnosa.map(([name, count]) => [name, count]),
-                  'Laporan_Penyakit_Terbanyak',
-                  'LAPORAN 10 BESAR PENYAKIT PUSKESMAS SAMATA'
-                );
-              }}
-            >
-              <FileText className="w-5 h-5 text-emerald-600" />
-              <div className="text-left">
-                <div className="text-sm font-semibold">Laporan Penyakit Terbanyak</div>
-                <div className="text-xs text-slate-400">Top 10 Diagnosa</div>
-              </div>
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full justify-start gap-3 h-12"
-              onClick={() => {
                 const bpjsVisits = visitPatients.filter(v => v.patient?.asuransi === 'BPJS');
                 const data = bpjsVisits.map(v => [
                   v.tanggalKunjungan,

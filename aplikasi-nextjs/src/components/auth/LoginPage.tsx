@@ -36,8 +36,12 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         {/* Logo and Title */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-emerald-600 rounded-2xl shadow-xl shadow-emerald-200 mb-6 rotate-3">
-            <Activity className="w-10 h-10 text-white" />
+          <div className="inline-flex items-center justify-center w-24 h-24 bg-white rounded-2xl shadow-xl shadow-emerald-200 mb-6 rotate-3 overflow-hidden p-2">
+            <img
+              src="/logo-gowa.jpg"
+              alt="Logo Gowa"
+              className="w-full h-full object-contain"
+            />
           </div>
           <h1 className="text-3xl font-extrabold text-slate-900 mb-2 tracking-tight">
             PUSKESMAS SAMATA
@@ -136,6 +140,7 @@ export default function LoginPage() {
 
         <div className="mt-12 text-center text-xs text-slate-400">
           <p>© 2024 PUSKESMAS SAMATA. Dinas Kesehatan Pemerintah Kabupaten Gowa</p>
+          <p className="mt-1 font-semibold text-emerald-600/70">created by Hj. Dahliah Aris, AMK.</p>
         </div>
       </div>
     </div>
