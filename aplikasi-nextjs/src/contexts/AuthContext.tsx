@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react'
 
 interface AuthContextType {
   isAuthenticated: boolean
-  user: { username: string } | null
+  user: { username: string; role: 'admin' | 'user' } | null
   login: (username: string, password: string) => boolean
   logout: () => void
 }
@@ -31,9 +31,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const login = (username: string, password: string): boolean => {
-    // Admin and Demo authentication
-    if ((username === 'admin' && password === 'mami1980') || (username === 'kanghaji' && password === '475400')) {
-      const userData = { username }
+    // Admin and User authentication
+    let role: 'admin' | 'user' | null = null;
+
+    if (username === 'admin' && password === 'dataentry') {
+      role = 'admin';
+    } else if (username === 'user' && password === 'datamonit') {
+      role = 'user';
+    }
+
+    if (role) {
+      const userData = { username, role }
       setIsAuthenticated(true)
       setUser(userData)
       localStorage.setItem(AUTH_KEY, JSON.stringify({ user: userData }))

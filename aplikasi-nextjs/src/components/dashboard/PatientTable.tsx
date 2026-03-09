@@ -9,6 +9,7 @@ import { Patient, Visit, WILAYAH_KERJA, ASURANSI, JENIS_KELAMIN } from '@/lib/da
 import { Trash2, Search, Filter, Printer, Download, UserCheck, PlusCircle } from 'lucide-react'
 import DataInputModal from '@/components/data-input/DataInputModal'
 import { exportToExcel, exportToPDF, printPatientCard } from '@/lib/exportUtils'
+import { useAuth } from '@/contexts/AuthContext'
 
 interface PatientTableProps {
   patients: Patient[]
@@ -19,6 +20,8 @@ interface PatientTableProps {
 }
 
 export default function PatientTable({ patients, visits, onUpdate, onDelete, onAddVisit }: PatientTableProps) {
+  const { user } = useAuth()
+  const isAdmin = user?.role === 'admin'
   const [search, setSearch] = useState('')
   const [filterRegion, setFilterRegion] = useState('All')
   const [filterInsurance, setFilterInsurance] = useState('All')
@@ -66,6 +69,11 @@ export default function PatientTable({ patients, visits, onUpdate, onDelete, onA
   const handlePrintCard = (patient: Patient) => {
     const patientVisits = visits.filter(v => v.patientId === patient.id);
     printPatientCard(patient, patientVisits);
+  };
+
+  const handleExportCardExcel = (patient: Patient) => {
+    const patientVisits = visits.filter(v => v.patientId === patient.id);
+    import('@/lib/exportUtils').then(m => m.exportPatientCardToExcel(patient, patientVisits));
   };
 
   return (
@@ -177,34 +185,51 @@ export default function PatientTable({ patients, visits, onUpdate, onDelete, onA
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-1">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                        title="Tambah Kunjungan"
-                        onClick={() => onAddVisit(p)}
-                      >
-                        <PlusCircle className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 w-8 p-0 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
-                        title="Cetak Kartu Pasien"
-                        onClick={() => handlePrintCard(p)}
-                      >
-                        <UserCheck className="h-4 w-4" />
-                      </Button>
-                      <DataInputModal editPatient={p} onDataAdded={onUpdate} />
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-                        title="Hapus Pasien"
-                        onClick={() => onDelete(p.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      {isAdmin && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                          title="Tambah Kunjungan"
+                          onClick={() => onAddVisit(p)}
+                        >
+                          <PlusCircle className="h-4 w-4" />
+                        </Button>
+                      )}
+                      <div className="flex gap-0.5">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
+                          title="Cetak Kartu Pasien (PDF)"
+                          onClick={() => handlePrintCard(p)}
+                        >
+                          <UserCheck className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 text-green-600 hover:text-green-700 hover:bg-green-50"
+                          title="Ekspor Kartu Pasien (Excel)"
+                          onClick={() => handleExportCardExcel(p)}
+                        >
+                          <Download className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      {isAdmin && (
+                        <>
+                          <DataInputModal editPatient={p} onDataAdded={onUpdate} />
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                            title="Hapus Pasien"
+                            onClick={() => onDelete(p.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </TableCell>
                 </TableRow>

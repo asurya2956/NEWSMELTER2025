@@ -110,31 +110,6 @@ export default function LoginPage() {
               </Button>
             </form>
 
-            <div className="mt-8 pt-6 border-t border-slate-100 text-center">
-              <p className="text-xs text-slate-400 mb-2 uppercase tracking-tighter font-bold">Kredensial Login:</p>
-              <div className="flex flex-col gap-2">
-                <div className="flex justify-center gap-4">
-                  <div className="bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
-                     <span className="text-[10px] text-slate-400 mr-1">Admin User:</span>
-                     <span className="text-xs font-mono font-bold text-emerald-700">admin</span>
-                  </div>
-                  <div className="bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
-                     <span className="text-[10px] text-slate-400 mr-1">Admin Pass:</span>
-                     <span className="text-xs font-mono font-bold text-emerald-700">mami1980</span>
-                  </div>
-                </div>
-                <div className="flex justify-center gap-4">
-                  <div className="bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
-                     <span className="text-[10px] text-slate-400 mr-1">Demo User:</span>
-                     <span className="text-xs font-mono font-bold text-emerald-700">kanghaji</span>
-                  </div>
-                  <div className="bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
-                     <span className="text-[10px] text-slate-400 mr-1">Demo Pass:</span>
-                     <span className="text-xs font-mono font-bold text-emerald-700">475400</span>
-                  </div>
-                </div>
-              </div>
-            </div>
           </CardContent>
         </Card>
 

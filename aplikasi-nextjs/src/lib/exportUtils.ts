@@ -105,3 +105,39 @@ export const printPatientCard = (patient: Patient, visits: Visit[]) => {
 
   doc.save(`Kartu_Pasien_${patient.nomorRM}.pdf`);
 };
+
+export const exportPatientCardToExcel = (patient: Patient, visits: Visit[]) => {
+  const patientInfo = [
+    { Kategori: 'Nama Pasien', Detail: patient.nama },
+    { Kategori: 'Nomor RM', Detail: patient.nomorRM },
+    { Kategori: 'NIK', Detail: patient.nik },
+    { Kategori: 'Tanggal Lahir', Detail: patient.tanggalLahir },
+    { Kategori: 'Jenis Kelamin', Detail: patient.jenisKelamin },
+    { Kategori: 'Wilayah Kerja', Detail: patient.wilayahKerja },
+    { Kategori: 'Asuransi', Detail: patient.asuransi },
+    { Kategori: 'Alamat Domisili', Detail: patient.alamatDomisili },
+  ];
+
+  const visitData = visits.map(v => ({
+    'Tanggal Kunjungan': v.tanggalKunjungan,
+    'Keluhan': v.keluhan,
+    'Diagnosa': v.diagnosa,
+    'Tindakan': v.tindakan,
+    'TD (mmHg)': v.tekananDarah || '-',
+    'Suhu (°C)': v.suhu || '-',
+    'BB (kg)': v.beratBadan || '-',
+    'TB (cm)': v.tinggiBadan || '-'
+  }));
+
+  const wb = XLSX.utils.book_new();
+
+  // Sheet 1: Biodata
+  const ws1 = XLSX.utils.json_to_sheet(patientInfo);
+  XLSX.utils.book_append_sheet(wb, ws1, 'Biodata Pasien');
+
+  // Sheet 2: Riwayat Kunjungan
+  const ws2 = XLSX.utils.json_to_sheet(visitData);
+  XLSX.utils.book_append_sheet(wb, ws2, 'Riwayat Kunjungan');
+
+  XLSX.writeFile(wb, `Kartu_Pasien_${patient.nomorRM}.xlsx`);
+};

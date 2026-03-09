@@ -164,6 +164,32 @@ export default function DashboardReports({ patients, visits }: DashboardReportsP
               variant="outline"
               className="w-full justify-start gap-3 h-12"
               onClick={() => {
+                const data = visitPatients.map(v => [
+                  v.tanggalKunjungan,
+                  v.patient?.nomorRM || '',
+                  v.patient?.nama || '',
+                  v.diagnosa,
+                  v.tindakan,
+                  v.keluhan
+                ]);
+                exportToPDF(
+                  ['Tanggal', 'No RM', 'Nama Pasien', 'Diagnosa', 'Tindakan', 'Keluhan'],
+                  data,
+                  `Summary_Kunjungan_${reportType}`,
+                  `LAPORAN SUMMARY KUNJUNGAN ${reportType.toUpperCase()}`
+                );
+              }}
+            >
+              <FileText className="w-5 h-5 text-emerald-600" />
+              <div className="text-left">
+                <div className="text-sm font-semibold">Laporan Summary Kunjungan</div>
+                <div className="text-xs text-slate-400">Detil lengkap per periode</div>
+              </div>
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full justify-start gap-3 h-12"
+              onClick={() => {
                 const bpjsVisits = visitPatients.filter(v => v.patient?.asuransi === 'BPJS');
                 const data = bpjsVisits.map(v => [
                   v.tanggalKunjungan,

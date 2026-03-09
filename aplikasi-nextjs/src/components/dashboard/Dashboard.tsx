@@ -22,6 +22,7 @@ const VISITS_STORAGE_KEY = 'puskesmas_samata_visits';
 
 export default function Dashboard() {
   const { user, logout } = useAuth()
+  const isAdmin = user?.role === 'admin'
   const navigate = useNavigate()
   const location = useLocation()
   const [sidebarOpen, setSidebarOpen] = useState(true)
@@ -180,7 +181,7 @@ export default function Dashboard() {
               </p>
             </div>
             <div className="flex items-center space-x-6">
-              <DataInputModal onDataAdded={handlePatientAdded} />
+              {isAdmin && <DataInputModal onDataAdded={handlePatientAdded} />}
               <div className="h-10 w-px bg-slate-200" />
               <div className="text-right">
                 <p className="text-slate-400 text-[10px] uppercase font-bold tracking-tighter">Waktu Server</p>
