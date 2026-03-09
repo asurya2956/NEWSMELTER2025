@@ -1,0 +1,19 @@
+
+> puskesmas-samata-visitor-app@0.1.0 dev
+> next dev
+
+ ⚠ Port 3000 is in use, using available port 3001 instead.
+   ▲ Next.js 15.3.2
+   - Local:        http://localhost:3001
+   - Network:      http://192.168.0.2:3001
+
+ ✓ Starting...
+ ⚠ Invalid next.config.mjs options detected:
+ ⚠     Unrecognized key(s) in object: 'root' at "turbopack"
+ ⚠ See more info here: https://nextjs.org/docs/messages/invalid-next-config
+ ⚠ turbopack.root should be absolute, using: /app/aplikasi-nextjs
+ ✓ Ready in 2.6s
+ ○ Compiling / ...
+ ✓ Compiled / in 11.6s (2567 modules)
+ GET / 200 in 14194ms
+[?25h

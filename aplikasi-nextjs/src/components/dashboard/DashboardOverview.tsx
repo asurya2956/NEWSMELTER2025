@@ -1,9 +1,9 @@
 "use client"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Patient } from '@/lib/data'
+import { Patient, WILAYAH_KERJA } from '@/lib/data'
 import VisitorAnalytics from './VisitorAnalytics'
-import { Users, UserCheck, ShieldCheck, MapPin } from 'lucide-react'
+import { Users, UserCheck, ShieldCheck, MapPin, PersonStanding } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import { differenceInYears, parseISO } from 'date-fns'
 
@@ -14,12 +14,13 @@ interface DashboardOverviewProps {
 export default function DashboardOverview({ patients }: DashboardOverviewProps) {
   const totalPatients = patients.length
   const bpjsCount = patients.filter(p => p.asuransi === 'BPJS').length
-  const samataCount = patients.filter(p => p.wilayahKerja === 'Samata').length
   const femaleCount = patients.filter(p => p.jenisKelamin === 'Perempuan').length
+  const maleCount = patients.filter(p => p.jenisKelamin === 'Laki-laki').length
 
   const stats = [
     { title: 'Total Pasien', value: totalPatients, icon: <Users className="w-4 h-4 text-emerald-600" />, sub: 'Semua Kunjungan' },
     { title: 'Pasien BPJS', value: bpjsCount, icon: <ShieldCheck className="w-4 h-4 text-blue-600" />, sub: totalPatients > 0 ? `${Math.round((bpjsCount / totalPatients) * 100)}% dari total` : '0%' },
+    { title: 'Pasien Laki-laki', value: maleCount, icon: <PersonStanding className="w-4 h-4 text-indigo-600" />, sub: totalPatients > 0 ? `${Math.round((maleCount / totalPatients) * 100)}% dari total` : '0%' },
     { title: 'Pasien Perempuan', value: femaleCount, icon: <UserCheck className="w-4 h-4 text-pink-600" />, sub: totalPatients > 0 ? `${Math.round((femaleCount / totalPatients) * 100)}% dari total` : '0%' },
   ]
 
@@ -55,17 +56,40 @@ export default function DashboardOverview({ patients }: DashboardOverviewProps) 
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((s, i) => (
-          <Card key={i}>
+          <Card key={i} className="border-none shadow-sm bg-white/50 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-slate-500">{s.title}</CardTitle>
               {s.icon}
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{s.value}</div>
+              <div className="text-2xl font-bold text-slate-900">{s.value}</div>
               <p className="text-xs text-slate-400 mt-1">{s.sub}</p>
             </CardContent>
           </Card>
         ))}
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-sm font-bold text-emerald-800 uppercase tracking-widest px-1">Statistik Wilayah Kerja</h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          {WILAYAH_KERJA.map((w) => {
+            const count = patients.filter(p => p.wilayahKerja === w).length;
+            return (
+              <Card key={w} className="border-none shadow-sm hover:shadow-md transition-shadow bg-white/80">
+                <CardHeader className="p-3 pb-1">
+                  <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center mb-1">
+                    <MapPin className="w-4 h-4 text-emerald-600" />
+                  </div>
+                  <CardTitle className="text-[10px] uppercase font-bold text-slate-500 truncate">{w}</CardTitle>
+                </CardHeader>
+                <CardContent className="p-3 pt-0">
+                  <div className="text-xl font-black text-emerald-700">{count}</div>
+                  <p className="text-[9px] text-slate-400 font-medium">Pasien Terdaftar</p>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
       </div>
 
       <Card>

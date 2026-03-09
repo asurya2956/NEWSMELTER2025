@@ -43,6 +43,8 @@ export default function DashboardReports({ patients, visits }: DashboardReportsP
         total: regionVisits.length,
         bpjs: regionVisits.filter(v => v.patient?.asuransi === 'BPJS').length,
         umum: regionVisits.filter(v => v.patient?.asuransi === 'Umum').length,
+        laki: regionVisits.filter(v => v.patient?.jenisKelamin === 'Laki-laki').length,
+        perempuan: regionVisits.filter(v => v.patient?.jenisKelamin === 'Perempuan').length,
       }
     })
     return summary
@@ -54,6 +56,8 @@ export default function DashboardReports({ patients, visits }: DashboardReportsP
     const excelData = summaryData.map(s => ({
       'Wilayah': s.wilayah,
       'Total Pasien': s.total,
+      'Laki-laki': s.laki,
+      'Perempuan': s.perempuan,
       'BPJS': s.bpjs,
       'Umum': s.umum
     }));
@@ -61,8 +65,8 @@ export default function DashboardReports({ patients, visits }: DashboardReportsP
   }
 
   const handleExportPDF = () => {
-    const headers = ['Wilayah', 'Total Pasien', 'BPJS', 'Umum'];
-    const data = summaryData.map(s => [s.wilayah, s.total, s.bpjs, s.umum]);
+    const headers = ['Wilayah', 'Total', 'Laki-laki', 'Perempuan', 'BPJS', 'Umum'];
+    const data = summaryData.map(s => [s.wilayah, s.total, s.laki, s.perempuan, s.bpjs, s.umum]);
     exportToPDF(headers, data, `Laporan_${reportType}_Puskesmas_Samata`, `LAPORAN ${reportType.toUpperCase()} KUNJUNGAN PASIEN`);
   }
 
@@ -113,7 +117,9 @@ export default function DashboardReports({ patients, visits }: DashboardReportsP
                 <thead className="text-xs text-slate-700 uppercase bg-slate-50">
                   <tr>
                     <th className="px-6 py-3">Wilayah Kerja</th>
-                    <th className="px-6 py-3">Total Pasien</th>
+                    <th className="px-6 py-3">Total</th>
+                    <th className="px-6 py-3 text-indigo-600">L</th>
+                    <th className="px-6 py-3 text-pink-600">P</th>
                     <th className="px-6 py-3 text-blue-600">BPJS</th>
                     <th className="px-6 py-3 text-emerald-600">Umum</th>
                   </tr>
@@ -123,15 +129,19 @@ export default function DashboardReports({ patients, visits }: DashboardReportsP
                     <tr key={i} className="bg-white border-b border-slate-100 hover:bg-slate-50">
                       <td className="px-6 py-4 font-medium text-slate-900">{row.wilayah}</td>
                       <td className="px-6 py-4">{row.total}</td>
+                      <td className="px-6 py-4">{row.laki}</td>
+                      <td className="px-6 py-4">{row.perempuan}</td>
                       <td className="px-6 py-4">{row.bpjs}</td>
                       <td className="px-6 py-4">{row.umum}</td>
                     </tr>
                   ))}
                   <tr className="bg-slate-50 font-bold text-slate-900">
-                    <td className="px-6 py-4 uppercase">Total Keseluruhan</td>
+                    <td className="px-6 py-4 uppercase text-[10px]">Total Keseluruhan</td>
                     <td className="px-6 py-4">{summaryData.reduce((acc, curr) => acc + curr.total, 0)}</td>
-                    <td className="px-6 py-4">{summaryData.reduce((acc, curr) => acc + curr.bpjs, 0)}</td>
-                    <td className="px-6 py-4">{summaryData.reduce((acc, curr) => acc + curr.umum, 0)}</td>
+                    <td className="px-6 py-4 text-indigo-700">{summaryData.reduce((acc, curr) => acc + curr.laki, 0)}</td>
+                    <td className="px-6 py-4 text-pink-700">{summaryData.reduce((acc, curr) => acc + curr.perempuan, 0)}</td>
+                    <td className="px-6 py-4 text-blue-700">{summaryData.reduce((acc, curr) => acc + curr.bpjs, 0)}</td>
+                    <td className="px-6 py-4 text-emerald-700">{summaryData.reduce((acc, curr) => acc + curr.umum, 0)}</td>
                   </tr>
                 </tbody>
               </table>

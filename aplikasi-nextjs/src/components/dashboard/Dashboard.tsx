@@ -102,8 +102,12 @@ export default function Dashboard() {
         {/* Header */}
         <div className="p-4 border-b border-emerald-700">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-inner">
-              <span className="text-emerald-800 font-bold text-lg">PS</span>
+            <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center shadow-inner overflow-hidden">
+              <img
+                src="/logo-gowa.jpg"
+                alt="Logo Gowa"
+                className="w-full h-full object-contain p-1"
+              />
             </div>
             {sidebarOpen && (
               <div>
