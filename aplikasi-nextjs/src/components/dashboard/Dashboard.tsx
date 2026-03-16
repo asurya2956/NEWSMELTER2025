@@ -50,12 +50,8 @@ export default function Dashboard() {
 
   // Save to local storage
   useEffect(() => {
-    if (patients.length > 0) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(patients));
-    }
-    if (visits.length > 0) {
-      localStorage.setItem(VISITS_STORAGE_KEY, JSON.stringify(visits));
-    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(patients));
+    localStorage.setItem(VISITS_STORAGE_KEY, JSON.stringify(visits));
   }, [patients, visits]);
 
   const handlePatientAdded = (newPatient: Patient) => {
