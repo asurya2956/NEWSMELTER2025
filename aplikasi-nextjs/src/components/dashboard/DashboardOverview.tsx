@@ -1,0 +1,156 @@
+"use client"
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Patient, WILAYAH_KERJA } from '@/lib/data'
+import VisitorAnalytics from './VisitorAnalytics'
+import { Users, UserCheck, ShieldCheck, MapPin, PersonStanding } from 'lucide-react'
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts'
+import { differenceInYears, parseISO } from 'date-fns'
+
+interface DashboardOverviewProps {
+  patients: Patient[]
+}
+
+export default function DashboardOverview({ patients }: DashboardOverviewProps) {
+  const totalPatients = patients.length
+  const bpjsCount = patients.filter(p => p.asuransi === 'BPJS').length
+  const umumCount = patients.filter(p => p.asuransi === 'Umum').length
+  const femaleCount = patients.filter(p => p.jenisKelamin === 'Perempuan').length
+  const maleCount = patients.filter(p => p.jenisKelamin === 'Laki-laki').length
+
+  const stats = [
+    { title: 'Total Pasien', value: totalPatients, icon: <Users className="w-4 h-4 text-emerald-600" />, sub: 'Semua Kunjungan' },
+    { title: 'Pasien BPJS', value: bpjsCount, icon: <ShieldCheck className="w-4 h-4 text-blue-600" />, sub: totalPatients > 0 ? `${Math.round((bpjsCount / totalPatients) * 100)}% BPJS` : '0%' },
+    { title: 'Pasien Umum', value: umumCount, icon: <ShieldCheck className="w-4 h-4 text-emerald-600" />, sub: totalPatients > 0 ? `${Math.round((umumCount / totalPatients) * 100)}% Umum` : '0%' },
+    { title: 'Laki-laki', value: maleCount, icon: <PersonStanding className="w-4 h-4 text-indigo-600" />, sub: totalPatients > 0 ? `${Math.round((maleCount / totalPatients) * 100)}%` : '0%' },
+    { title: 'Perempuan', value: femaleCount, icon: <UserCheck className="w-4 h-4 text-pink-600" />, sub: totalPatients > 0 ? `${Math.round((femaleCount / totalPatients) * 100)}%` : '0%' },
+  ]
+
+  const getAgeData = () => {
+    const ages = patients.map(p => differenceInYears(new Date(), parseISO(p.tanggalLahir)))
+    const groups = [
+      { name: '0-5', range: [0, 5], count: 0 },
+      { name: '6-12', range: [6, 12], count: 0 },
+      { name: '13-18', range: [13, 18], count: 0 },
+      { name: '19-45', range: [19, 45], count: 0 },
+      { name: '46-60', range: [46, 60], count: 0 },
+      { name: '60+', range: [61, 150], count: 0 },
+    ]
+
+    ages.forEach(age => {
+      const group = groups.find(g => age >= g.range[0] && age <= g.range[1])
+      if (group) group.count++
+    })
+
+    return groups.map(g => ({ name: g.name, value: g.count }))
+  }
+
+  const ageData = getAgeData()
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-800">Dashboard Overview</h1>
+          <p className="text-slate-500">Ringkasan data kunjungan pasien secara real-time</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        {stats.map((s, i) => (
+          <Card key={i} className="border-none shadow-sm bg-white/50 backdrop-blur-sm">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-slate-500">{s.title}</CardTitle>
+              {s.icon}
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-slate-900">{s.value}</div>
+              <p className="text-xs text-slate-400 mt-1">{s.sub}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-sm font-bold text-emerald-800 uppercase tracking-widest px-1">Statistik Wilayah Kerja</h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          {WILAYAH_KERJA.map((w) => {
+            const count = patients.filter(p => p.wilayahKerja === w).length;
+            return (
+              <Card key={w} className="border-none shadow-sm hover:shadow-md transition-shadow bg-white/80">
+                <CardHeader className="p-3 pb-1">
+                  <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center mb-1">
+                    <MapPin className="w-4 h-4 text-emerald-600" />
+                  </div>
+                  <CardTitle className="text-[10px] uppercase font-bold text-slate-500 truncate">{w}</CardTitle>
+                </CardHeader>
+                <CardContent className="p-3 pt-0">
+                  <div className="text-xl font-black text-emerald-700">{count}</div>
+                  <p className="text-[9px] text-slate-400 font-medium">Pasien Terdaftar</p>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Analisis Demografis Pengunjung</CardTitle>
+          <CardDescription>Visualisasi data berdasarkan kriteria yang ditentukan</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <VisitorAnalytics patients={patients} />
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base font-semibold">Kunjungan Terakhir</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {patients.slice(0, 5).map((p) => (
+                <div key={p.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-100">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-xs uppercase">
+                      {p.nama.charAt(0)}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-slate-900">{p.nama}</p>
+                      <p className="text-xs text-slate-500">{p.nomorRM} • {p.asuransi}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs font-medium text-slate-400 uppercase">{p.wilayahKerja}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base font-semibold">Distribusi Berdasarkan Kelompok Usia</CardTitle>
+          </CardHeader>
+          <CardContent className="h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={ageData}>
+                <XAxis dataKey="name" fontSize={12} />
+                <YAxis fontSize={12} />
+                <Tooltip />
+                <Bar dataKey="value" fill="#10b981" radius={[4, 4, 0, 0]}>
+                  {ageData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#10b981' : '#3b82f6'} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  )
+}
